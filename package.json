@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "clean": "rm -rf windows_installer QRKodVysvedceni",
-    "pyinstaller": "cd python && conda run -n electron pyinstaller -y --onefile script.py && cp dist/script.exe ..",
+    "pyinstaller": "cd python && conda run -n qr-kod-vysvedceni pyinstaller -y --onefile script.spec && cp dist/script.exe ..",
     "package": "electron-packager . --ignore=python --overwrite --platform=win32 --arch=x64 QRKodVysvedceni",
     "installer": "node build_installer.js"
   },
