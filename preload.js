@@ -3,6 +3,8 @@ const ChildProcess = require('child_process').execFile;
 const Shell = require('electron').shell
 const fs = require('fs')
 
+const isPackaged = window.process.argv[0] === "--packaged";
+
 const OpenDialogButton = function (btn_id, files_callback, error_callback) {
   document.querySelector(btn_id).addEventListener('click', function (event) {
     const promise = dialog.showOpenDialog({
@@ -75,7 +77,11 @@ const FixExternalLinks = function () {
 
 window.addEventListener('DOMContentLoaded', () => {
   const isDev = process.argv0.includes("node_modules")
-  const exe_path = isDev ? "script.exe" : process.resourcesPath + "/app/script.exe";
+  let exe_path = isDev ? "script.exe" : process.resourcesPath + "/app/script.exe";
+
+  if(!isPackaged) {
+    exe_path = "python";
+  }
 
   ShowSuccess(false);
   FixExternalLinks();
@@ -86,7 +92,21 @@ window.addEventListener('DOMContentLoaded', () => {
     return files.reduce((p, file, index) => {
       return p.then(() => {
         ShowProgressbar(Math.round(((index + 1) / files.length) * 100))
-        return PromiseExec(exe_path, [file])
+        let args = [file]
+
+        if(!isPackaged) {
+          args = ["python/script.py"].concat(args)
+        }
+
+        if(index == 0) {
+          args.push("--first");
+        }
+
+        if(index == (files.length - 1)) {
+          args.push("--last")
+        }
+        
+        return PromiseExec(exe_path, args)
       }).catch(err =>
         Promise.reject(`Error processing file ${file}: ${err}\n`)
       )
@@ -95,6 +115,7 @@ window.addEventListener('DOMContentLoaded', () => {
       ShowProgressbar(0);
       console.log("Done!", python_result)
       ShowSuccess(true);
+      alert("Hotovo!");
     }).catch(error => {
       console.error(error);
       alert(error);
