@@ -14,7 +14,7 @@ const OpenDialogButton = function (btn_id, files_callback, error_callback) {
         // handle files
         files_callback(files.filePaths);
       } else {
-        error_callback("No files selected!");
+        error_callback("Nebyly vybrány žádné soubory!");
       }
     }).catch(error_callback);
   });

@@ -7,7 +7,7 @@ const path = require('path');
 // 2. Define input and output directory.
 // Important: the directories must be absolute, not relative e.g
 // appDirectory: "C:\\Users\sdkca\Desktop\OurCodeWorld-win32-x64", 
-const APP_DIR = path.resolve(__dirname, './ElectronPacakge-win32-x64');
+const APP_DIR = path.resolve(__dirname, './QRKodVysvedceni-win32-x64');
 // outputDirectory: "C:\\Users\sdkca\Desktop\windows_installer", 
 const OUT_DIR = path.resolve(__dirname, './windows_installer');
 
@@ -17,10 +17,10 @@ const msiCreator = new MSICreator({
     outputDirectory: OUT_DIR,
 
     // Configure metadata
-    description: 'My electron application',
-    exe: 'ElectronPackage',
-    name: 'Electron package',
-    manufacturer: 'TODO',
+    description: 'Aplikace pro čtení QR kódů z vysvědčení',
+    exe: 'QRKodVysvedceni',
+    name: 'QR Vysvědčení',
+    manufacturer: 'Filip Sivák',
     version: '1.0.0',
 
     // Configure installer User Interface

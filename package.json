@@ -1,26 +1,24 @@
 {
   "name": "electron-quick-start",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Aplikace pro čtení QR kódu z vysvědčení",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "clean": "rm -rf windows_installer ElectronPacakge",
-    "makecondaenv": "conda create --name electron python==3.7 unidecode pyinstaller",
+    "clean": "rm -rf windows_installer QRKodVysvedceni",
     "pyinstaller": "cd python && conda run -n electron pyinstaller -y --onefile script.py && cp dist/script.exe ..",
-    "package": "electron-packager . --ignore=python --overwrite --platform=win32 --arch=x64 ElectronPacakge",
+    "package": "electron-packager . --ignore=python --overwrite --platform=win32 --arch=x64 QRKodVysvedceni",
     "installer": "node build_installer.js"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/FilipSivak/qr-kod-vysvedceni",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "QR",
+    "code",
+    "Czech republic",
+    "report card"
   ],
   "author": "GitHub",
-  "license": "CC0-1.0",
+  "license": "GPLv3",
   "devDependencies": {
     "electron": "^8.2.0",
     "electron-packager": "^14.2.1",
