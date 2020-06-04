@@ -18,7 +18,7 @@ Aplikace je v současné době ve vývoji. Kód vychází ze šablony https://gi
     ```
 4. Nainstalujte nodejs závislosti `npm install`
 5. Development verzi aplikace spusťte přes `npm start`
-6. Po úpravě python scriptu spusťte pyinstaller build `npom run pyinstaller`
+6. Po úpravě python scriptu spusťte pyinstaller build `npm run pyinstaller`
 7. Po dokončení všech úprav spusťte následující příkaz pro sestavení instalátoru apliakce:
     ```
     npm run clean && npm run pyinstaller && npm run package && npm run installer
