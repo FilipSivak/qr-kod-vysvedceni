@@ -1,0 +1,35 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "clean": "rm -rf windows_installer ElectronPacakge",
+    "makecondaenv": "conda create --name electron python==3.7 unidecode pyinstaller",
+    "pyinstaller": "cd python && conda run -n electron pyinstaller -y --onefile script.py && cp dist/script.exe ..",
+    "package": "electron-packager . --ignore=python --overwrite --platform=win32 --arch=x64 ElectronPacakge",
+    "installer": "node build_installer.js"
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^8.2.0",
+    "electron-packager": "^14.2.1",
+    "electron-rebuild": "^1.10.1",
+    "electron-wix-msi": "^2.2.0"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "keytar": "^5.4.0",
+    "windows-credman": "^1.0.1"
+  }
+}

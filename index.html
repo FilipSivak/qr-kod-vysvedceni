@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <title>Electron package</title>
+  </head>
+  <body>
+    <h1>Electron package</h1>
+    <p>This is an example <a class="external" href="https://www.wikipedia.org/">external link to Wikipedia</a>!</p>
+    <form>
+        <div class="form-group">
+            <label for="space">Some input</label>
+            <input type="text" class="form-control" id="space" value="GENERAL">
+            <small id="emailHelp" class="form-text text-muted">
+              Some help text.
+            </small>
+        </div>
+        
+        <button type="button" id="btn" class="btn btn-primary">Select files</button>
+    </form>
+    
+    <div id="show_progress">
+      <div class="wait">
+        Please wait
+      </div>
+      <div id="progress_wrapper" class="progress">
+        <div  id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+
+    <div id="show_success" class="alert alert-success" role="alert">
+        Done!
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+
+    <script src="./js_lib/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="./js_lib/popper.min.js" crossorigin="anonymous"></script>
+    <script src="./js_lib/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  </body>
+</html>

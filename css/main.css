@@ -1,0 +1,18 @@
+body {
+    padding: 20px;
+}
+
+#show_progress {
+    display: none;
+    margin: 10px;
+}
+
+#show_progress .wait {
+    width: 100%;
+    text-align: center;
+}
+
+#show_success {
+    display: none;
+    margin: 10px;
+}
