@@ -16,10 +16,10 @@ const msiCreator = new MSICreator({
     outputDirectory: OUT_DIR,
 
     // Configure metadata
-    description: 'Aplikace pro čtení QR kódů z vysvědčení',
+    description: 'Aplikace pro cteni QR kodu z vysvedceni',
     exe: 'QRKodVysvedceni',
-    name: 'QR Vysvědčení',
-    manufacturer: 'Filip Sivák',
+    name: 'QR Vysvedceni',
+    manufacturer: 'Filip Sivak',
     version: '1.0.0',
 
     // Configure installer User Interface
