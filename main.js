@@ -1,9 +1,18 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu, MenuItem} = require('electron')
 const path = require('path')
+const shell = require('electron').shell
 
 function createWindow () {
   // Create the browser window.
+  Menu.getApplicationMenu().append(new MenuItem ({
+    label: 'Odkazy',
+        submenu: [
+            {label: "Otevřít stránku aplikace", click: () => shell.openExternal("https://github.com/FilipSivak/qr-kod-vysvedceni")},
+            {label: 'Otevřít složku s logem', click: () => shell.openItem(process.env.USERPROFILE + "\\AppData\\Local\\electron\\QRKodVysvedceni")}
+        ]
+  }));
+
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,

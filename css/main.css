@@ -12,7 +12,7 @@ body {
     text-align: center;
 }
 
-#show_success, #show_error {
+#show_success, #show_error, #show_warning {
     display: none;
     margin: 10px;
 }

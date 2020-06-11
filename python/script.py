@@ -14,6 +14,8 @@ import shutil
 import re
 import pandas as pd # don't forget to install optional dependencies 'xlwt' and 'xlrd' of pandas!
 import json
+import logging
+import tempfile
 
 def find_qr_detection(detections):
     for det in detections:
@@ -27,9 +29,11 @@ def detect_grades(file_path):
         yield {"soubor": Path(file_path).name, "chyba": "Soubor nenalezen."}
 
     # some filenames would not be accepted by opencv
-    shutil.copy(file_path, "tmp.jpg")
-    img = cv2.imread("tmp.jpg")
-    
+    tmp = tempfile.NamedTemporaryFile().name
+    shutil.copy(file_path, tmp)
+    img = cv2.imread(tmp)
+    os.unlink(tmp)
+
     # perform QR code detection
     detections = pyzbar.decode(img)
     det = find_qr_detection(detections)
@@ -57,6 +61,16 @@ def parent_process_error(message: str, task_index: int, task_number: int):
     print(json.dumps(["error", message.strip(), task_index, task_number]), flush=True)
 
 if __name__ == "__main__":
+    DEBUG_DIR = Path(os.environ["USERPROFILE"]).joinpath("AppData\\Local\\electron\\QRKodVysvedceni")
+    if not DEBUG_DIR.exists():
+        os.makedirs(DEBUG_DIR)
+
+    logging.basicConfig(
+        filename=str(DEBUG_DIR.joinpath("log.txt")), level=logging.DEBUG, 
+        format='%(asctime)s %(levelname)s %(name)s %(message)s'
+    )
+    logger = logging.getLogger(__name__)
+    
     parent_process_message("Inicializuji", 0, 10000)
     
     if len(sys.argv) < 3:
@@ -64,11 +78,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     TARGET_PATH = Path(sys.argv[1])
+    logger.debug(f"Target path: {TARGET_PATH}")
 
     try:
         with open(TARGET_PATH, "w") as file:
             pass
-    except IOError:
+    except IOError as err:
+        logger.error(err)
         parent_process_error(f"Do ciloveho souboru nelze zapisovat! Je otevren v Excelu?", 1, 1)
         sys.exit(1)
 
@@ -84,8 +100,9 @@ if __name__ == "__main__":
                 else:
                     items.append(grades)
             parent_process_message(f"Zpracovavam soubory: {index}/{len(sys.argv[2:])}", index, len(sys.argv[2:]))
-        except Exception as e:
-            errors.append({"soubor": Path(file_path).name, "chyba": (str(e))})
+        except Exception as err:
+            logger.error(err)
+            errors.append({"soubor": Path(file_path).name, "chyba": f"{type(err).__name__}: {str(err)}"})
     
     parent_process_message(f"Ukladam do {TARGET_PATH}", 999, 1000)
 
@@ -94,9 +111,16 @@ if __name__ == "__main__":
         grades_df = pd.DataFrame(items)
         writer = pd.ExcelWriter(TARGET_PATH)
         grades_df.to_excel(writer, sheet_name = 'Známky', index = False)
-        grades_df.groupby(by = ["soubor", "jmeno"], as_index = False).mean().to_excel(writer, sheet_name = 'Průměry', index = False)
+        
+        try:
+            grades_df.groupby(by = ["soubor", "jmeno"], as_index = False).mean().to_excel(writer, sheet_name = 'Průměry', index = False)
+        except Exception as err:
+            logger.error(err)
+        
         pd.DataFrame(errors).to_excel(writer, sheet_name = 'Chyby', index = False)
         writer.save()
         writer.close()
-    except:
-        parent_process_error(f"Chyba pri ukladani souboru!", 1, 1)
+    except Exception as err:
+        logger.error(err)
+        parent_process_error(f"Chyba pri ukladani souboru: {type(err).__name__}: {str(err)}", 1, 1)
+        sys.exit(1)

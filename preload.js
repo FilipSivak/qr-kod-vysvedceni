@@ -6,7 +6,7 @@ const fs = require('fs')
 const {chunksToLinesAsync, chomp} = require('@rauschma/stringio');
 const {spawn} = require('child_process');
 
-const isPackaged = window.process.argv[0] === "--packaged";
+const isPackaged = window.process.argv[window.process.argv.length - 1] === "--packaged";
 
 const OpenDialogButton = function (btn_id, files_callback, error_callback) {
   document.querySelector(btn_id).addEventListener('click', function (event) {
@@ -70,13 +70,26 @@ const ShowSuccess = function(show) {
   }
 }
 
+let showing_error = false;
 const ShowError = function(show, error_message) {
   if (show) {
+    showing_error = true;
     document.querySelector("#show_error").style.display = "block";
     document.querySelector("#error-message").innerText = error_message;
   } else {
+    showing_error = false;
     document.querySelector("#show_error").style.display = "none";
     document.querySelector("#error-message").innerText = "neznámá chyba";
+  }
+}
+
+const ShowWarning = function(show, warning_message) {
+  if (show) {
+    document.querySelector("#show_warning").style.display = "block";
+    document.querySelector("#warning-message").innerText = warning_message;
+  } else {
+    document.querySelector("#show_warning").style.display = "none";
+    document.querySelector("#warning-message").innerText = "";
   }
 }
 
@@ -104,10 +117,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const isDev = process.argv0.includes("node_modules")
   let exe_path = isDev ? "script.exe" : process.resourcesPath + "/app/script.exe";
   let target_path = process.env.USERPROFILE + "\\Documents\\Znamky.xlsx";
+  let prepend_args = []
   UpdateFileTarget(target_path);
 
   if(!isPackaged) {
     exe_path = "python";
+    prepend_args = ["python/script.py"]
+    ShowWarning(true, `Development mode: using command ${exe_path} ${prepend_args}`);
   }
 
   ShowSuccess(false);
@@ -145,8 +161,11 @@ window.addEventListener('DOMContentLoaded', () => {
     ShowError(false);
 
     console.log("Spawning the process");
-    ShowProgressbar(0.001, "Připravuji");
-    const source = spawn('python', ["python/script.py", target_path].concat(files), {stdio: ['ignore', 'pipe', process.stderr]});
+    ShowProgressbar(0.001, "Připravuji (strpení prosím)");
+
+    const args = prepend_args.concat([target_path]).concat(files)
+    console.log(`Spawning process ${exe_path} with args ${args.join(", ")}`)
+    const source = spawn(exe_path, args, {stdio: ['ignore', 'pipe', process.stderr]});
     await HandleTaskEvents(source.stdout);
 
     const file_link = document.querySelector("#link-saved-file")
@@ -159,6 +178,16 @@ window.addEventListener('DOMContentLoaded', () => {
       if (code == 0) {
         ShowProgressbar(0);
         ShowSuccess(true);
+      } else {
+        ShowProgressbar(0);
+
+        if(!showing_error) {
+          if(!isPackaged) {
+            ShowError(true, "Chyba při běhu python skriptu. Zapnuli jste conda environment pomocí příkazu 'conda activate qr-kod-vysvedceni'?");
+          } else {
+            ShowError(true, "Neočekávaná chyba při běhu python skriptu");
+          }
+        }
       }
     })
     

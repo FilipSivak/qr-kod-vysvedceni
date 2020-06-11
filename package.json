@@ -5,9 +5,9 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "clean": "rm -rf windows_installer QRKodVysvedceni",
+    "clean": "rm -rf windows_installer QRKodVysvedceni-win32-x64 script.exe",
     "pyinstaller": "cd python && conda run -n qr-kod-vysvedceni pyinstaller -y --onefile script.spec && cp dist/script.exe ..",
-    "package": "electron-packager . --ignore=python --overwrite --platform=win32 --arch=x64 QRKodVysvedceni",
+    "package": "electron-packager . --ignore=\"(python|jupyter-notebooks|doc)\" --overwrite --platform=win32 --arch=x64 QRKodVysvedceni",
     "installer": "node build_installer.js"
   },
   "repository": "https://github.com/FilipSivak/qr-kod-vysvedceni",
@@ -26,9 +26,6 @@
     "electron-wix-msi": "^2.2.0"
   },
   "dependencies": {
-    "@rauschma/stringio": "^1.4.0",
-    "bcrypt": "^4.0.1",
-    "keytar": "^5.4.0",
-    "windows-credman": "^1.0.1"
+    "@rauschma/stringio": "^1.4.0"
   }
 }

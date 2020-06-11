@@ -12,12 +12,18 @@
     <title>Čtení QR kódů z vysvědčení</title>
   </head>
   <body>
+    <div id="show_warning" class="alert alert-warning" role="alert">
+      <span id="warning-message"></span>
+    </div>
+
     <h1>Čtení QR kódů z vysvědčení</h1>
     
     <form id="step1">
       <h3>1. Kam se má uložit výsledek?</h3>
       <p>Známky načtené z vysvědčení se uloží do <b id="file-target"></b>. <br>
-        Soubor nesmí být otevřený v Excelu po čas práce této aplikace.</p>
+        Soubor nesmí být otevřený v Excelu po čas práce této aplikace.<br>
+        Aplikace neposílá žádná data přes internet. Můžete se klidně odpojit od internetu.
+      </p>
       <button type="button" id="btnSelectSaveLocation" class="btn btn-primary">Vybrat jiné cílové umístění</button>
     </form>
     
