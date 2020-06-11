@@ -3,6 +3,9 @@ const ChildProcess = require('child_process').execFile;
 const Shell = require('electron').shell
 const fs = require('fs')
 
+const {chunksToLinesAsync, chomp} = require('@rauschma/stringio');
+const {spawn} = require('child_process');
+
 const isPackaged = window.process.argv[0] === "--packaged";
 
 const OpenDialogButton = function (btn_id, files_callback, error_callback) {
@@ -45,12 +48,13 @@ const PromiseExec = function (executable_path, args) {
   })
 }
 
-const ShowProgressbar = function (percentage) {
+const ShowProgressbar = function (percentage, message = "Prosím čekejte") {
   console.log("Progress:", percentage);
   if (percentage > 0) {
     document.querySelector("#btn").disabled = true;
     document.querySelector("#show_progress").style.display = "block";
     document.querySelector("#progress").style.width = `${percentage}%`;
+    document.querySelector("#show-progress-message").innerText = message;
   } else {
     document.querySelector("#show_progress").style.display = "none";
     document.querySelector("#progress").style.width = "0%";
@@ -58,11 +62,21 @@ const ShowProgressbar = function (percentage) {
   }
 }
 
-const ShowSuccess = function (show) {
+const ShowSuccess = function(show) {
   if (show) {
     document.querySelector("#show_success").style.display = "block";
   } else {
     document.querySelector("#show_success").style.display = "none";
+  }
+}
+
+const ShowError = function(show, error_message) {
+  if (show) {
+    document.querySelector("#show_error").style.display = "block";
+    document.querySelector("#error-message").innerText = error_message;
+  } else {
+    document.querySelector("#show_error").style.display = "none";
+    document.querySelector("#error-message").innerText = "neznámá chyba";
   }
 }
 
@@ -73,11 +87,24 @@ const FixExternalLinks = function () {
       Shell.openExternal(link.href)
     })
   })
+
+  document.querySelectorAll("a.externalItem").forEach(link => {
+    link.addEventListener("click", function (event) {
+      event.preventDefault()
+      Shell.openItem(link.href)
+    })
+  })
+}
+
+const UpdateFileTarget = function(target) {
+  document.querySelector("#file-target").innerText = target;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
   const isDev = process.argv0.includes("node_modules")
   let exe_path = isDev ? "script.exe" : process.resourcesPath + "/app/script.exe";
+  let target_path = process.env.USERPROFILE + "\\Documents\\Znamky.xlsx";
+  UpdateFileTarget(target_path);
 
   if(!isPackaged) {
     exe_path = "python";
@@ -86,47 +113,56 @@ window.addEventListener('DOMContentLoaded', () => {
   ShowSuccess(false);
   FixExternalLinks();
 
-  OpenDialogButton("#btn", function (files) {
-    ShowSuccess(false);
-
-    return files.reduce((p, file, index) => {
-      return p.then(() => {
-        ShowProgressbar(Math.round(((index + 1) / files.length) * 100))
-        let args = [file]
-
-        if(!isPackaged) {
-          args = ["python/script.py"].concat(args)
-        }
-
-        if(index == 0) {
-          args.push("--first");
-        }
-
-        if(index == (files.length - 1)) {
-          args.push("--last")
-        }
-        
-        return PromiseExec(exe_path, args)
-      }).catch(err =>
-        Promise.reject(`Error processing file ${file}: ${err}\n`)
-      )
-    }, Promise.resolve()
-    ).then((python_result) => {
-      ShowProgressbar(0);
-      console.log("Done!", python_result)
-      ShowSuccess(true);
-      alert("Hotovo!");
-    }).catch(error => {
-      console.error(error);
-      alert(error);
-
-      ShowProgressbar(0);
-      ShowSuccess(false);
+  document.querySelector("#btnSelectSaveLocation").addEventListener("click", () => {
+    dialog.showSaveDialog({ defaultPath: target_path, filters: [{ name: "*.xlsx (Excel)", extensions: ['xlsx'] }] }).then((path) => {
+      if(!path.canceled) {
+        target_path = path.filePath;
+        UpdateFileTarget(target_path);
+      }
     })
-  },
-    function (err) {
-      alert(err);
-    }
-  );
+  });
 
+  /** Inspired by https://2ality.com/2018/05/child-process-streams.html */
+  async function HandleTaskEvents(readable) {
+    for await (const line of chunksToLinesAsync(readable)) {
+      const data = chomp(line);
+      console.log(data);
+      const [type, message, task, taskCount] = JSON.parse(data);
+
+      if(type == "message") {
+        ShowProgressbar((0.001 + (parseInt(task) / parseInt(taskCount))) * 100, message);
+      }
+
+      if(type == "error") {
+        ShowError(true, message);
+        ShowProgressbar(0);
+      }
+    }
+  }
+
+  const DialogHandlerFunction = async function(files) {
+    ShowSuccess(false);
+    ShowError(false);
+
+    console.log("Spawning the process");
+    ShowProgressbar(0.001, "Připravuji");
+    const source = spawn('python', ["python/script.py", target_path].concat(files), {stdio: ['ignore', 'pipe', process.stderr]});
+    await HandleTaskEvents(source.stdout);
+
+    const file_link = document.querySelector("#link-saved-file")
+    file_link.href = target_path;
+    file_link.innerText = target_path;
+
+    // TODO handle exit code
+
+    source.on("exit", function(code, signal) {
+      if (code == 0) {
+        ShowProgressbar(0);
+        ShowSuccess(true);
+      }
+    })
+    
+  }
+
+  OpenDialogButton("#btn", DialogHandlerFunction, () => alert("Error"));
 });

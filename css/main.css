@@ -12,7 +12,11 @@ body {
     text-align: center;
 }
 
-#show_success {
+#show_success, #show_error {
     display: none;
     margin: 10px;
+}
+
+#step2 {
+    margin-top: 15px;
 }

@@ -13,13 +13,22 @@
   </head>
   <body>
     <h1>Čtení QR kódů z vysvědčení</h1>
-    <p>Začněte výběrem vysvědčení. Vyberte více souborů pomocí zkratky <code>Ctrl+A</code> nebo <code>Ctrl+Click</code>.</p>
-    <form>      
-        <button type="button" id="btn" class="btn btn-primary">Vyberte vysvědčení</button>
+    
+    <form id="step1">
+      <h3>1. Kam se má uložit výsledek?</h3>
+      <p>Známky načtené z vysvědčení se uloží do <b id="file-target"></b>. <br>
+        Soubor nesmí být otevřený v Excelu po čas práce této aplikace.</p>
+      <button type="button" id="btnSelectSaveLocation" class="btn btn-primary">Vybrat jiné cílové umístění</button>
+    </form>
+    
+    <form id="step2">      
+      <h3>2. Jaká vysvědčení se mají zpracovat?</h3>
+      <p>Vyberte více souborů pomocí zkratky <code>Ctrl+A</code> nebo <code>Ctrl+Click</code>.</p>
+      <button type="button" id="btn" class="btn btn-primary">Vyberte soubory vysvědčení</button>
     </form>
     
     <div id="show_progress">
-      <div class="wait">
+      <div id="show-progress-message" class="wait">
         Prosím čekejte
       </div>
       <div id="progress_wrapper" class="progress">
@@ -28,7 +37,11 @@
     </div>
 
     <div id="show_success" class="alert alert-success" role="alert">
-        Hotovo!
+        Hotovo! Otevřít <a href="" id="link-saved-file" class="externalItem">soubor</a>.
+    </div>
+
+    <div id="show_error" class="alert alert-danger" role="alert">
+      Chyba: <span id="error-message">neznámá chyba</span>
     </div>
 
     <!-- You can also require other files to run in this process -->
