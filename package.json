@@ -26,6 +26,7 @@
     "electron-wix-msi": "^2.2.0"
   },
   "dependencies": {
-    "@rauschma/stringio": "^1.4.0"
+    "@rauschma/stringio": "^1.4.0",
+    "minimist": ">=0.2.1"
   }
 }
