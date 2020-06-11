@@ -4,7 +4,7 @@ Podle [doporučení MŠMT](https://www.msmt.cz/vzdelavani/skolstvi-v-cr/doporuce
 Aplikace je v současné době ve vývoji. Kód vychází ze šablony https://github.com/FilipSivak/electron-python-starter.
 
 ## Informace pro vývojáře
-1. Vytvořte miniconda environment:
+1. Vytvořte [miniconda](https://docs.conda.io/en/latest/miniconda.html) environment:
     ```
     conda create --name qr-kod-vysvedceni python==3.7 unidecode
     ```
@@ -25,5 +25,8 @@ Aplikace je v současné době ve vývoji. Kód vychází ze šablony https://gi
     ```
 
 ## Todo
-- architektura aplikace se musí změnit tak, aby se python script volal pouze jednou a ne pro každý soubor zvlášť. Progress právě zpracovávané dávky je potřeba reportovat z běžícího python scriptu (možná přes UDP?)
 - nabídnout možnost zahrnout známky z 8. třídy
+- kromě obrázků zpracovávat také pdf
+- upravit menu
+    - čeština
+    - odebrat "Help" sekci
