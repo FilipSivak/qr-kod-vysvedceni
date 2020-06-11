@@ -6,9 +6,8 @@ const path = require('path');
 
 // 2. Define input and output directory.
 // Important: the directories must be absolute, not relative e.g
-// appDirectory: "C:\\Users\sdkca\Desktop\OurCodeWorld-win32-x64", 
+
 const APP_DIR = path.resolve(__dirname, './QRKodVysvedceni-win32-x64');
-// outputDirectory: "C:\\Users\sdkca\Desktop\windows_installer", 
 const OUT_DIR = path.resolve(__dirname, './windows_installer');
 
 // 3. Instantiate the MSICreator
