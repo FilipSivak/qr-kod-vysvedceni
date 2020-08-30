@@ -40,7 +40,7 @@ def detect_grades(file_path):
     
     if det is None:
         # todo: handle non-detected files
-        yield {"soubor": Path(file_path).name, "chyba": "QR kod nenalezen."}
+        return(yield {"soubor": Path(file_path).name, "chyba": "QR kod nenalezen."})
       
     qr_data_tokens = det.data.decode("utf-8", "strict").split(";")
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         filename=str(DEBUG_DIR.joinpath("log.txt")), level=logging.DEBUG, 
-        format='%(asctime)s %(levelname)s %(name)s %(message)s'
+        format='%(asctime)s %(levelname)s %(filename)s:%(lineno)d %(name)s %(message)s'
     )
     logger = logging.getLogger(__name__)
     
@@ -88,10 +88,25 @@ if __name__ == "__main__":
         parent_process_error(f"Do ciloveho souboru nelze zapisovat! Je otevren v Excelu?", 1, 1)
         sys.exit(1)
 
+    # Find folder and list all images
+    image_dir = Path(sys.argv[2])
+    if not image_dir.exists():
+        parent_process_error(f"Slozka s vysvedcenimi neexistuje!", 1, 1)
+        sys.exit(1)
+
+    images = []
+    for file in image_dir.iterdir():
+        if file.suffix.lower() in [".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"]:
+            images.append(file)
+
+    if len(images) <= 0:
+        parent_process_error(f"Slozka s vysvedcenimi neobsahuje obrazky!", 1, 1)
+        sys.exit(1)
+
     # detect and store grades
     items = []
     errors = []
-    for index, file_path in enumerate(sys.argv[2:]):
+    for index, file_path in enumerate(images):
         try:
             file_path = Path(file_path)
             for grades in detect_grades(file_path):
@@ -99,7 +114,7 @@ if __name__ == "__main__":
                     errors.append(grades)
                 else:
                     items.append(grades)
-            parent_process_message(f"Zpracovavam soubory: {index}/{len(sys.argv[2:])}", index, len(sys.argv[2:]))
+            parent_process_message(f"Zpracovavam soubory: {index}/{len(images)}", index, len(images))
         except Exception as err:
             logger.error(err)
             errors.append({"soubor": Path(file_path).name, "chyba": f"{type(err).__name__}: {str(err)}"})

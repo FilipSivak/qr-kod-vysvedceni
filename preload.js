@@ -11,7 +11,7 @@ const isPackaged = window.process.argv[window.process.argv.length - 1] === "--pa
 const OpenDialogButton = function (btn_id, files_callback, error_callback) {
   document.querySelector(btn_id).addEventListener('click', function (event) {
     const promise = dialog.showOpenDialog({
-      properties: ['openFile', 'multiSelections']
+      properties: ['openDirectory']
     });
 
     promise.then((files) => {
