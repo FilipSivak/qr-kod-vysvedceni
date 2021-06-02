@@ -1,5 +1,5 @@
 # Aplikace pro čtení QR kódů z vysvědčení
-Podle [doporučení MŠMT](https://www.msmt.cz/vzdelavani/skolstvi-v-cr/doporuceni-msmt-k-uvadeni-qr-kodu-na-vysvedcenich-a-dalsich) se nyní na vysvědčení uvádí QR kódy, které obsahují informace o známkách. To umožňuje strojové spracování vysvědčení. Přečtěte si více o [formátu QR kódu na vysvědčení](./doc/Prilohy_Doporuceni_k_uvadeni_QR_na_Vysvedceni.pdf).
+Podle [doporučení MŠMT](https://www.msmt.cz/vzdelavani/skolstvi-v-cr/doporuceni-msmt-k-uvadeni-qr-kodu-na-vysvedcenich-a-dalsich) se nyní na vysvědčení uvádí QR kódy, které obsahují informace o známkách. To umožňuje strojové zpracování vysvědčení. Přečtěte si více o [formátu QR kódu na vysvědčení](./doc/Prilohy_Doporuceni_k_uvadeni_QR_na_Vysvedceni.pdf).
 
 Aplikace je v současné době ve vývoji. Kód vychází ze šablony https://github.com/FilipSivak/electron-python-starter.
 
