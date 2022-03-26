@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "@rauschma/stringio": "^1.4.0",
-    "minimist": ">=0.2.1"
+    "minimist": ">=1.2.6"
   }
 }
